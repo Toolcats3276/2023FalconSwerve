@@ -158,7 +158,7 @@ public class Robot extends TimedRobot {
       case 4: // high cone
       {
         armDoublePH.set(Value.kForward);
-        if (mode3_4_Timer.hasElapsed(0.3)){
+        if (mode3_4_Timer.hasElapsed(0.5)){
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneHigh));}
         
        break;
@@ -449,7 +449,7 @@ public class Robot extends TimedRobot {
         setMode(8);
       }
       if (m_drivController.getRawButton(14)){ //mid cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput,-2);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput,-1.75);
       }
       if (m_drivController.getRawButton(15)){// low cone
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2);
