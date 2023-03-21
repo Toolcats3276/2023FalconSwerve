@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class noTurnAuto extends SequentialCommandGroup {
-    public noTurnAuto(Swerve s_Swerve){
+public class onePiece extends SequentialCommandGroup {
+    public onePiece(Swerve s_Swerve){
         TrajectoryConfig config =
             new TrajectoryConfig(
                     1,
