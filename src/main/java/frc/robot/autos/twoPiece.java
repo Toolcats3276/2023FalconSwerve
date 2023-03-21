@@ -44,7 +44,7 @@ public class twoPiece extends SequentialCommandGroup {
 
   
 //loads path
-PathPlannerTrajectory full = PathPlanner.loadPath("full", new PathConstraints(2, 1.5));
+PathPlannerTrajectory full = PathPlanner.loadPath("fullTwoPiece", new PathConstraints(2, 1.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
