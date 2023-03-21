@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -38,78 +39,53 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class exampleAuto extends SequentialCommandGroup {
-    public exampleAuto(Swerve s_Swerve){
+public class twoPiece extends SequentialCommandGroup {
+    public twoPiece(Swerve s_Swerve){
 
-// This will load the file "Example Path.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
-PathPlannerTrajectory first = PathPlanner.loadPath("first", new PathConstraints(2, 1.5));
+  
+//loads path
+PathPlannerTrajectory full = PathPlanner.loadPath("full", new PathConstraints(2, 1.5));
 
-var thetaController =
-new ProfiledPIDController(
-    Constants.AutoConstants.kPThetaController, 0.005, 0.5, Constants.AutoConstants.kThetaControllerConstraints);
-thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
+//creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
 new PPSwerveControllerCommand(
-    first,
+    full,
     s_Swerve::getPose,
     Constants.Swerve.swerveKinematics,
-    new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-    new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-    new PIDController(Constants.AutoConstants.kPThetaController,0.005,0.5),
+    new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+    new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+    new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
+    true,
     s_Swerve);
 
-    // This will load the file "Example Path.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
-PathPlannerTrajectory second = PathPlanner.loadPath("second", new PathConstraints(4, 3));
+//#######################################################################################################################
+   
+//auto commands
 
-var thetaController2 =
-new ProfiledPIDController(
-    Constants.AutoConstants.kPThetaController, 0.005, 0.5, Constants.AutoConstants.kThetaControllerConstraints);
-thetaController2.enableContinuousInput(-Math.PI, Math.PI);
+// addCommands(//arm up
+//     new InstantCommand(() -> {Signaling.mode = 13;})
+// );
+ 
+// addCommands(//wrist out
+//     new InstantCommand(() -> {Signaling.mode = 14;})
+// );
 
-PPSwerveControllerCommand swerveControllerCommand2 =
-new PPSwerveControllerCommand(
-    second,
-    s_Swerve::getPose,
-    Constants.Swerve.swerveKinematics,
-    new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-    new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-    new PIDController(Constants.AutoConstants.kPThetaController,0.005,0.5),
-    s_Swerve::setModuleStates,
-    s_Swerve);
+// addCommands(//shoot
+//     new InstantCommand(() -> {Signaling.mode = 11;})
+// );
 
+// addCommands(//comp
+//     new InstantCommand(() -> {Signaling.mode = 12;})
+// );
 
-
-addCommands(
-
-    new InstantCommand(
-            () -> s_Swerve.resetOdometry(
-                new Pose2d(
-                    first.getInitialPose().getX(),
-                    first.getInitialPose().getY(), 
-                    Rotation2d.fromDegrees(0)
-                    )
-                )
-            ),
-    swerveControllerCommand
-); 
-
-addCommands(
-    new WaitCommand(5)
+addCommands(//reset odometry, move to cube
+    new InstantCommand(),
+        swerveControllerCommand
 );
-
-addCommands(
-        swerveControllerCommand2
-);
-
-
-
-
 
     }
 }
-
 
 
 

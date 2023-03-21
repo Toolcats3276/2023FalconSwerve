@@ -198,12 +198,14 @@ public class Robot extends TimedRobot {
       case 11:{ //auto outfeed
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, -1.5);
 
+        break;
       }
-      case 12:{
+      case 12:{// auto comp
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), comp));
-        armDoublePH.set(Value.kReverse);// arm pos manual input for complienc
+        armDoublePH.set(Value.kReverse);// arm pos manual input for complience
 
+        break;
       }
       case 13:{//auto arms up
         armDoublePH.set(Value.kForward);
@@ -214,6 +216,7 @@ public class Robot extends TimedRobot {
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),cubeHigh));
         armDoublePH.set(Value.kForward);
 
+        break;
       }
       
     }
