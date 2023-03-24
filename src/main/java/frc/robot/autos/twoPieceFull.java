@@ -39,12 +39,12 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class twoPiece extends SequentialCommandGroup {
-    public twoPiece(Swerve s_Swerve){
+public class twoPieceFull extends SequentialCommandGroup {
+    public twoPieceFull(Swerve s_Swerve){
 
   
 //loads path
-PathPlannerTrajectory full = PathPlanner.loadPath("fullTwoPiece", new PathConstraints(2, 1.5));
+PathPlannerTrajectory full = PathPlanner.loadPath("twoPieceFull", new PathConstraints(2, 1.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
