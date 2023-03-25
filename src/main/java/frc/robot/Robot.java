@@ -466,7 +466,7 @@ public class Robot extends TimedRobot {
         setMode(8);
       }
       if (m_drivController.getRawButton(9)){ //mid cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2);
 
 
       }

@@ -39,12 +39,12 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class twoPiece extends SequentialCommandGroup {
-    public twoPiece(Swerve s_Swerve){
+public class twoPieceFull extends SequentialCommandGroup {
+    public twoPieceFull(Swerve s_Swerve){
 
   
 //loads path
-PathPlannerTrajectory full = PathPlanner.loadPath("full", new PathConstraints(2, 1.5));
+PathPlannerTrajectory full = PathPlanner.loadPath("twoPieceFull", new PathConstraints(2, 1));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -52,16 +52,19 @@ new PPSwerveControllerCommand(
     full,
     s_Swerve::getPose,
     Constants.Swerve.swerveKinematics,
-    new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-    new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
-    new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+    new PIDController(
+        0.5, 0.007, 0.1), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+    new PIDController(
+        0.5, 0.007, 0.1), // Y controller (usually the same values as X controller)
+    new PIDController(
+        0.3, 0.00005, 0.15), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
     true,
     s_Swerve);
 
 //#######################################################################################################################
    
-//auto commands
+// auto commands
 
 // addCommands(//arm up
 //     new InstantCommand(() -> {Signaling.mode = 13;})
@@ -79,13 +82,17 @@ new PPSwerveControllerCommand(
 //     new InstantCommand(() -> {Signaling.mode = 12;})
 // );
 
-addCommands(//reset odometry, move to cube
-    new InstantCommand(),
-        swerveControllerCommand
-);
-
+addCommands(
+new InstantCommand(
+        () -> s_Swerve.resetOdometry(
+                new Pose2d(
+                    full.getInitialPose().getX(),
+                    full.getInitialPose().getY(), 
+                    Rotation2d.fromDegrees(0)))), 
+                swerveControllerCommand);
     }
 }
+
 
 
 
