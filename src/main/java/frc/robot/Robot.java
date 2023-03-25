@@ -52,8 +52,8 @@ public class Robot extends TimedRobot {
 
   private final Timer sensor_Timer = new Timer();
   private final Timer mode3_Timer = new Timer();
-  private final Timer mode3_4_Timer = new Timer();
-  private final Timer mode_5_6_timer = new Timer();
+  private final Timer mode_4_5_Timer = new Timer();
+  private final Timer mode6_timer = new Timer();
   private final Timer mode7_8_timer = new Timer();
 
   private final TalonFX m_wristMotor = new TalonFX(15);
@@ -90,14 +90,17 @@ public class Robot extends TimedRobot {
   double armPIDOutput = 0;
   int memory_mode = 0;
   
+//positions
+  double comp = 0.70;
 
-  double comp = 0.91;
-  double coneIn = 0.416;
-  double cubeIn = 0.53;
-  double coneHigh = 0.56;
-  double cubeHigh = 0.71;
-  double coneMid = 0.43;
-  double cubeMid = 0.93; // same as complience
+  double coneIn = 0.20;
+  double cubeIn = 0.32;
+
+  double coneHigh = 0.34;
+  double cubeHigh = 0.44;
+
+  double coneMid = 0.22;
+  double cubeMid = 0.70; // same as complience
 
 
   public int Mode(int mode) {
@@ -147,9 +150,9 @@ public class Robot extends TimedRobot {
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), comp));        
        armDoublePH.set(Value.kReverse);// arm pos manual input for complience
-        if (mode3_Timer.hasElapsed(3)) {
-          mode = 0;
-        }
+        // if (mode3_Timer.hasElapsed(3)) {
+          // mode = 0;
+        // }
         break;
       }
 //#######################################################################################################################
@@ -158,7 +161,7 @@ public class Robot extends TimedRobot {
       case 4: // high cone
       {
         armDoublePH.set(Value.kForward);
-        if (mode3_4_Timer.hasElapsed(0.5)){
+        if (mode_4_5_Timer.hasElapsed(1)){
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneHigh));}
         
        break;
@@ -167,7 +170,7 @@ public class Robot extends TimedRobot {
       case 5: // high cube
       {
         armDoublePH.set(Value.kForward);
-        if (mode3_4_Timer.hasElapsed(0.25)){
+        if (mode_4_5_Timer.hasElapsed(0.85)){
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeHigh));
         }
           break;        
@@ -175,11 +178,21 @@ public class Robot extends TimedRobot {
      
       
       case 6: { // cone mid
-          armDoublePH.set(Value.kForward);    
-          m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneMid));        
+          armDoublePH.set(Value.kForward);  
+          
+        if (mode6_timer.hasElapsed(1)){
+          m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneMid)); 
+        }       
         break;
       }
-     
+      case 9: {
+          armDoublePH.set(Value.kReverse);     
+          m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeMid)); 
+          break;
+      }
+
+
+//#########################################################################################################      
       case 7: { //outfeed cone
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, .5); 
         memory_mode = 0;
@@ -187,7 +200,7 @@ public class Robot extends TimedRobot {
 
       }
       case 8: { //outfeed cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -.5);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2);
         memory_mode = 0;
         break;
       }
@@ -237,9 +250,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     wristPID.setP(6.5);
     wristPID.setI(0.0005);
-    wristPID.setD(0.9);
-    wristPID.setOutputLimits(-1, 1);
-    wristPID.setOutputRampRate(1);
+    wristPID.setD(1.2);
+    wristPID.setOutputLimits(-.75, .75);
+    wristPID.setOutputRampRate(2);
     // wristPID.setMaxIOutput(kDefaultPeriod);
   }
 
@@ -318,7 +331,8 @@ public class Robot extends TimedRobot {
       memory_mode = 0;
       sensor_Timer.reset();
       mode3_Timer.reset();
-      mode_5_6_timer.reset();
+      mode_4_5_Timer.reset();
+      mode6_timer.reset();
       mode7_8_timer.start();
       
     }
@@ -444,15 +458,17 @@ public class Robot extends TimedRobot {
       if (m_drivController.getRawButton(1) && (getMode() == 4 || getMode() == 6) && (getMode() != 5) ) {// outfeed cone  (2 for xbox)
         setMode(7);
 
-      } else if (m_drivController.getRawButton(1) && (getMode() == 5) && (getMode() != 4)) {// outfeed cube  (2 for xbox)
+      } else if (m_drivController.getRawButton(1) && ((getMode() == 5) || (getMode() == 3)) && (getMode() != 4)) {// outfeed cube  (2 for xbox)
                                                                                                    
         setMode(8);
       }
-      if (m_drivController.getRawButton(14)){ //mid cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput,-1.75);
-      }
-      if (m_drivController.getRawButton(15)){// low cone
+      if (m_drivController.getRawButton(9)){ //mid cube
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2);
+
+
+      }
+      if (m_drivController.getRawButton(14)){// low cone
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2);
       }
       if (m_drivController.getRawButtonPressed(2)){
         wristPID.reset();
@@ -471,24 +487,30 @@ public class Robot extends TimedRobot {
       } else {
         mode3_Timer.reset();
       }
-      if (getMode() == 4 || getMode() == 5) { //mode 7 and 8 timer
-        mode_5_6_timer.start();
-      } else {
-        mode_5_6_timer.reset();
+
+
+      if (getMode() == 4 || getMode() == 5){
+        mode_4_5_Timer.start();
       }
-      if (getMode() == 7  || getMode() == 8){
+       else{
+        mode_4_5_Timer.reset();
+       }
+
+
+      if ((getMode() == 6)) { //guess what its for
+        mode6_timer.start();
+      } else {
+        mode6_timer.reset();
+      }
+      if (getMode() == 7  || getMode() == 8){ 
         mode7_8_timer.start();
       }
       else {
         mode7_8_timer.reset();
       }
 
-      if (getMode() == 4 || getMode() == 5){
-        mode3_4_Timer.start();
-      }
-      else{
-        mode3_4_Timer.reset();
-      }
+      
+      
 
 
 
