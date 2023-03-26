@@ -226,7 +226,7 @@ public class Robot extends TimedRobot {
         break;
       }
       case 14:{//auto wrist up
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),cubeHigh));
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),0.44));
         armDoublePH.set(Value.kForward);
 
         break;
@@ -254,7 +254,7 @@ public class Robot extends TimedRobot {
     wristPID.setP(6.5);
     wristPID.setI(0.0005);
     wristPID.setD(1.2);
-    wristPID.setOutputLimits(-.75, .75);
+    wristPID.setOutputLimits(-1, 1);
     wristPID.setOutputRampRate(2);
     // wristPID.setMaxIOutput(kDefaultPeriod);
   }

@@ -44,7 +44,7 @@ public class twoPieceFull extends SequentialCommandGroup {
 
   
 //loads path
-PathPlannerTrajectory full = PathPlanner.loadPath("twoPieceFull", new PathConstraints(2, 1));
+PathPlannerTrajectory full = PathPlanner.loadPath("twoPieceFull", new PathConstraints(2.5, 1.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -53,11 +53,11 @@ new PPSwerveControllerCommand(
     s_Swerve::getPose,
     Constants.Swerve.swerveKinematics,
     new PIDController(
-        0.5, 0.007, 0.1), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        0.5, 0.017, 0.1), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     new PIDController(
-        0.5, 0.007, 0.1), // Y controller (usually the same values as X controller)
+        0.5, 0.017, 0.1), // Y controller (usually the same values as X controller)
     new PIDController(
-        0.3, 0.00005, 0.15), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        0.3, 0.00008, 0.1), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
     true,
     s_Swerve);
@@ -66,24 +66,26 @@ new PPSwerveControllerCommand(
    
 // auto commands
 
-// addCommands(//arm up
-//     new InstantCommand(() -> {Signaling.mode = 13;})
-// );
- 
-// addCommands(//wrist out
-//     new InstantCommand(() -> {Signaling.mode = 14;})
-// );
-
-// addCommands(//shoot
-//     new InstantCommand(() -> {Signaling.mode = 11;})
-// );
-
-// addCommands(//comp
-//     new InstantCommand(() -> {Signaling.mode = 12;})
-// );
 
 addCommands(
-new InstantCommand(
+
+    new InstantCommand(() -> {Signaling.mode = 13;}),
+
+    new WaitCommand(1),
+
+    new InstantCommand(() -> {Signaling.mode = 14;}),
+    
+    new WaitCommand(2),
+
+    new InstantCommand(() -> {Signaling.mode = 8;}),
+
+    new WaitCommand(1),
+
+    new InstantCommand(() -> {Signaling.mode = 3;}),
+
+    new WaitCommand(1),
+
+    new InstantCommand(
         () -> s_Swerve.resetOdometry(
                 new Pose2d(
                     full.getInitialPose().getX(),
