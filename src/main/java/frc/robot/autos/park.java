@@ -42,18 +42,43 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 public class park extends SequentialCommandGroup {
     public park(Swerve s_Swerve){
 
-  
+ 
+//#######################################################################################################################
+
+
 //loads path
-PathPlannerTrajectory park = PathPlanner.loadPath("park", new PathConstraints(2, 1.5));
+PathPlannerTrajectory first = PathPlanner.loadPath("parkFull", new PathConstraints(.75, 0.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
 new PPSwerveControllerCommand(
-    park,
+    first,
     s_Swerve::getPose,
     Constants.Swerve.swerveKinematics,
-    new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-    new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+    new PIDController(2, 10, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.   
+    //TODO try 0.5, 5, 0 at comp
+    new PIDController(2, 10, 0), // Y controller (usually the same values as X controller)
+
+    new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+    s_Swerve::setModuleStates,
+    true,
+    s_Swerve);
+
+//#######################################################################################################################
+
+//loads path
+PathPlannerTrajectory second = PathPlanner.loadPath("parkSecond", new PathConstraints(.75, 0.5));
+
+//creates swerve controller command
+PPSwerveControllerCommand swerveControllerCommand2 =
+new PPSwerveControllerCommand(
+    second,
+    s_Swerve::getPose,
+    Constants.Swerve.swerveKinematics,
+    new PIDController(2, 10, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.   
+    //TODO try 0.5, 5, 0 at comp
+    new PIDController(2, 10, 0), // Y controller (usually the same values as X controller)
+
     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
     true,
@@ -63,9 +88,47 @@ new PPSwerveControllerCommand(
    
 //auto commands
 
+
+// addCommands(
+//     new InstantCommand(() -> {Signaling.mode = 13;})
+// );
+
+// addCommands(
+//     new WaitCommand(1)
+// );
+
+// addCommands(
+//     new InstantCommand(() -> {Signaling.mode = 14;})
+// );
+
+// addCommands(
+//     new WaitCommand(1.5)
+// );
+
+// addCommands(
+//     new InstantCommand(() -> {Signaling.mode = 7;})
+// );
+
+// addCommands(
+//     new WaitCommand(1)
+// );
+
+// addCommands(
+//     new InstantCommand(() -> {Signaling.mode = 3;})
+// );
+
+// addCommands(
+//     new WaitCommand(1)
+// );
+
 addCommands(//reset odometry, move to cube
-    new InstantCommand(),
-        swerveControllerCommand
+new InstantCommand(
+    () -> s_Swerve.resetOdometry(
+            new Pose2d(
+                first.getInitialPose().getX(),
+                first.getInitialPose().getY(),
+                first.getInitialHolonomicPose().getRotation()))),
+                swerveControllerCommand
 );
 
 

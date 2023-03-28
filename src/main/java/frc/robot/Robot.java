@@ -19,12 +19,15 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.lib.util.COTSFalconSwerveConstants.driveGearRatios;
 import frc.robot.MiniPID;
+import frc.robot.Constants.Swerve;
 import pabeles.concurrency.ConcurrencyOps.Reset;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.revrobotics.*;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.*;
 
 import java.util.Base64.Decoder;
@@ -97,7 +100,7 @@ public class Robot extends TimedRobot {
   double cubeIn = 0.32;
 
   double coneHigh = 0.34;
-  double cubeHigh = 0.44;
+  double cubeHigh = 0.44;//.44
 
   double coneMid = 0.22;
   double cubeMid = 0.70; // same as complience
@@ -200,7 +203,7 @@ public class Robot extends TimedRobot {
 
       }
       case 8: { //outfeed cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -1.5);
         memory_mode = 0;
         break;
       }
@@ -225,13 +228,23 @@ public class Robot extends TimedRobot {
 
         break;
       }
-      case 14:{//auto wrist up
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),0.44));
+      case 14:{//cube wrist up
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),coneHigh));
         armDoublePH.set(Value.kForward);
 
         break;
       }
+
       
+
+//#################################################################################################################
+
+//auto balance?
+      case 15:{
+        
+      }
+
+
     }
     return mode;
     }
@@ -253,9 +266,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     wristPID.setP(6.5);
     wristPID.setI(0.0005);
-    wristPID.setD(1.2);
+    wristPID.setD(0.8);//1.2
     wristPID.setOutputLimits(-1, 1);
-    wristPID.setOutputRampRate(2);
+    wristPID.setOutputRampRate(3);
     // wristPID.setMaxIOutput(kDefaultPeriod);
   }
 
@@ -388,7 +401,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("compressor", pcmCompressor.isEnabled());
     SmartDashboard.putBoolean("Auto Enabled", autoEnabled);
     SmartDashboard.putNumber("airPressure", pcmCompressor.getPressure());
-
+    SmartDashboard.putNumber("WristPid", wristPIDOutput);
+    // SmartDashboard.putNumber("swerveAngle");
 
 
 
@@ -466,12 +480,12 @@ public class Robot extends TimedRobot {
         setMode(8);
       }
       if (m_drivController.getRawButton(9)){ //mid cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -.5);
 
 
       }
       if (m_drivController.getRawButton(14)){// low cone
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2);
       }
       if (m_drivController.getRawButtonPressed(2)){
         wristPID.reset();

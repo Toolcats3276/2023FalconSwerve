@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -41,23 +42,50 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 public class twoPieceFull extends SequentialCommandGroup {
     public twoPieceFull(Swerve s_Swerve){
-
-  
+        
 //loads path
-PathPlannerTrajectory full = PathPlanner.loadPath("twoPieceFull", new PathConstraints(2.5, 1.75));
+PathPlannerTrajectory first = PathPlanner.loadPath("twoPieceFirst", new PathConstraints(2.5, 1.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
 new PPSwerveControllerCommand(
-    full,
+    first,
     s_Swerve::getPose,
     Constants.Swerve.swerveKinematics,
     new PIDController(
-        0.5, 0.017, 0.1), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        0.8, 0.005, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        //0.8, 0.0005, 0.1
     new PIDController(
-        0.5, 0.017, 0.1), // Y controller (usually the same values as X controller)
+        0.8, 0.005, 0), // Y controller (usually the same values as X controller)
+        //0.8, 0.0005, 0.1
     new PIDController(
-        0.3, 0.00008, 0.1), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        0.01, 0.05, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        // 0.4, 0.0008, 0.0005 
+    s_Swerve::setModuleStates,
+    true,
+    s_Swerve);
+
+
+
+
+    //loads path
+PathPlannerTrajectory second = PathPlanner.loadPath("twoPieceSecond", new PathConstraints(2, 0.55));
+
+//creates swerve controller command
+PPSwerveControllerCommand swerveControllerCommand2 =
+new PPSwerveControllerCommand(
+    second,
+    s_Swerve::getPose,
+    Constants.Swerve.swerveKinematics,
+    new PIDController(
+        0.8, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        //0.8, 0.0005, 0.1
+    new PIDController(
+        0.8, 0, 0), // Y controller (usually the same values as X controller)
+        //0.8, 0.0005, 0.1
+    new PIDController(
+        0.065, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+        // 0.4, 0.0008, 0.0005 
     s_Swerve::setModuleStates,
     true,
     s_Swerve);
@@ -66,32 +94,32 @@ new PPSwerveControllerCommand(
    
 // auto commands
 
-
 addCommands(
 
-    new InstantCommand(() -> {Signaling.mode = 13;}),
+    // new InstantCommand(() -> {Signaling.mode = 13;}),
 
-    new WaitCommand(1),
+    // new WaitCommand(1),
 
-    new InstantCommand(() -> {Signaling.mode = 14;}),
+    // new InstantCommand(() -> {Signaling.mode = 14;}),
     
-    new WaitCommand(2),
+    // new WaitCommand(2),
 
-    new InstantCommand(() -> {Signaling.mode = 8;}),
+    // new InstantCommand(() -> {Signaling.mode = 8;}),
 
-    new WaitCommand(1),
+    // new WaitCommand(1),
 
-    new InstantCommand(() -> {Signaling.mode = 3;}),
+    // new InstantCommand(() -> {Signaling.mode = 3;}),
 
-    new WaitCommand(1),
+    // new WaitCommand(1),
 
     new InstantCommand(
         () -> s_Swerve.resetOdometry(
                 new Pose2d(
-                    full.getInitialPose().getX(),
-                    full.getInitialPose().getY(), 
-                    Rotation2d.fromDegrees(0)))), 
-                swerveControllerCommand);
+                    first.getInitialPose().getX(),
+                    first.getInitialPose().getY(),
+                    first.getInitialHolonomicPose().getRotation()))),
+                    swerveControllerCommand,
+                    swerveControllerCommand2);
     }
 }
 
