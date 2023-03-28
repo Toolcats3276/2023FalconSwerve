@@ -39,8 +39,8 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class park extends SequentialCommandGroup {
-    public park(Swerve s_Swerve){
+public class parkCube extends SequentialCommandGroup {
+    public parkCube(Swerve s_Swerve){
 
  
 //#######################################################################################################################
@@ -89,37 +89,37 @@ new PPSwerveControllerCommand(
 //auto commands
 
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 13;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 13;})
+);
 
-// addCommands(
-//     new WaitCommand(1)
-// );
+addCommands(
+    new WaitCommand(1)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 14;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 15;})
+);
 
-// addCommands(
-//     new WaitCommand(1.5)
-// );
+addCommands(
+    new WaitCommand(1.5)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 7;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 8;})
+);
 
-// addCommands(
-//     new WaitCommand(1)
-// );
+addCommands(
+    new WaitCommand(1)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 3;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 3;})
+);
 
-// addCommands(
-//     new WaitCommand(1)
-// );
+addCommands(
+    new WaitCommand(1)
+);
 
 addCommands(//reset odometry, move to cube
 new InstantCommand(

@@ -197,13 +197,13 @@ public class Robot extends TimedRobot {
 
 //#########################################################################################################      
       case 7: { //outfeed cone
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, .5); 
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, .25); 
         memory_mode = 0;
        break;
 
       }
       case 8: { //outfeed cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -1.5);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -1);
         memory_mode = 0;
         break;
       }
@@ -211,14 +211,10 @@ public class Robot extends TimedRobot {
 
 
 //modes used for auto
-      case 11:{ //auto outfeed
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -1.5);
-
-        break;
-      }
+     
       case 12:{// auto comp
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), comp));
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), 0.70));
         armDoublePH.set(Value.kReverse);// arm pos manual input for complience
 
         break;
@@ -228,21 +224,63 @@ public class Robot extends TimedRobot {
 
         break;
       }
-      case 14:{//cube wrist up
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),coneHigh));
+      case 14:{//cone wrist up
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),0.32));
         armDoublePH.set(Value.kForward);
 
         break;
       }
+
+      case 15:{//cube wrist up
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),0.44));
+        armDoublePH.set(Value.kForward);
+
+        break;
+      }
+      case 16: {
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, .75); 
+          break;
+      }
+
+      case 18: {
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2); 
+          break;
+      }
+
+      case 17:{
+       
+          m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeIn));// wrist pos
+          // wristPIDOutput = wristPID.getOutput(wristPot.get(), cubeIn);// wrist pos
+  
+          armDoublePH.set(Value.kReverse);// arm pos
+  
+          m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.5);// motor speed
+          if (Sensor.get()) {// sensor delay
+            sensor_Timer.start();
+          } else {
+            sensor_Timer.reset();}
+
+          if (Sensor.get() && sensor_Timer.hasElapsed(.3 )) {
+            mode = 3;
+            break;
+       
+          }
+          break;
+          
+
+
+        
+       
+      }
+
+      
 
       
 
 //#################################################################################################################
 
 //auto balance?
-      case 15:{
-        
-      }
+     
 
 
     }
@@ -266,7 +304,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     wristPID.setP(6.5);
     wristPID.setI(0.0005);
-    wristPID.setD(0.8);//1.2
+    wristPID.setD(1.2);//1.2
     wristPID.setOutputLimits(-1, 1);
     wristPID.setOutputRampRate(3);
     // wristPID.setMaxIOutput(kDefaultPeriod);

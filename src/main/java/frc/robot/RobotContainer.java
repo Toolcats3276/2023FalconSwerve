@@ -81,7 +81,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-       return new park(s_Swerve);
+       return new whopperAuto(s_Swerve);
         
 
      }

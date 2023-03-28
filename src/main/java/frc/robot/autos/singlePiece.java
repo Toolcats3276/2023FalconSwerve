@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class oldOnePiece extends SequentialCommandGroup {
-    public oldOnePiece(Swerve s_Swerve){
+public class singlePiece extends SequentialCommandGroup {
+    public singlePiece(Swerve s_Swerve){
         TrajectoryConfig config =
             new TrajectoryConfig(
                     1,
