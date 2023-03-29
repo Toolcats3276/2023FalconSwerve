@@ -47,7 +47,7 @@ public class mobilityCube extends SequentialCommandGroup {
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("mobility", new PathConstraints(.75, 0.75));
+PathPlannerTrajectory first = PathPlanner.loadPath("mobility", new PathConstraints(2, 0.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =

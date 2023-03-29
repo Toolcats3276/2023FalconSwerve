@@ -48,7 +48,7 @@ public class whopperAuto extends SequentialCommandGroup {
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("mobility", new PathConstraints(2, 2));
+PathPlannerTrajectory first = PathPlanner.loadPath("whopperOne", new PathConstraints(2.5, 2));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -68,7 +68,7 @@ new PPSwerveControllerCommand(
 
 
     //loads path
-PathPlannerTrajectory second = PathPlanner.loadPath("mobilityTwo", new PathConstraints(1.5, 0.75));
+PathPlannerTrajectory second = PathPlanner.loadPath("whopperTwo", new PathConstraints(1.5, 0.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand2 =
@@ -93,7 +93,7 @@ new PPSwerveControllerCommand(
 addCommands(
     new InstantCommand(() -> {Signaling.mode = 13;}),
 
-    new InstantCommand(() -> {Signaling.mode = 15;})
+    new InstantCommand(() -> {Signaling.mode = 15;}) //15
 );
 
 addCommands(
@@ -101,16 +101,16 @@ addCommands(
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 8;})
+    new InstantCommand(() -> {Signaling.mode = 8;})  //8
 );
 
 addCommands(
-    new WaitCommand(1)
+    new WaitCommand(.25) //.25
 );
 
 addCommands(
     new InstantCommand(() -> {Signaling.mode = 3;}),
-    new WaitCommand(1),
+    new WaitCommand(0.5),
     new InstantCommand(() -> {Signaling.mode = 17;})
 );
 

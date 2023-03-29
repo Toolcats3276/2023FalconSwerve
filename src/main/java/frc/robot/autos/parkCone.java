@@ -47,7 +47,7 @@ public class parkCone extends SequentialCommandGroup {
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("parkFull", new PathConstraints(.75, 0.75));
+PathPlannerTrajectory first = PathPlanner.loadPath("park", new PathConstraints(.75, 0.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -67,7 +67,7 @@ new PPSwerveControllerCommand(
 //#######################################################################################################################
 
 //loads path
-PathPlannerTrajectory second = PathPlanner.loadPath("parkSecond", new PathConstraints(.75, 0.5));
+PathPlannerTrajectory second = PathPlanner.loadPath("lockWheels", new PathConstraints(.75, 0.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand2 =
