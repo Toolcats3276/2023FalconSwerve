@@ -66,7 +66,8 @@ public class Robot extends TimedRobot {
   private final TalonFX m_wristMotor = new TalonFX(15);
   private final TalonFX m_infeedMotor = new TalonFX(16);
 
-  private final MiniPID wristPID = new MiniPID(0, 0, 0);
+
+  MiniPID wristPID = new MiniPID(0, 0, 0);
   private final AnalogPotentiometer wristPot = new AnalogPotentiometer(0);
   private final DigitalInput Sensor = new DigitalInput(0);
 
@@ -99,8 +100,8 @@ public class Robot extends TimedRobot {
 //positions
   double comp = 0.70;
 
-  double coneIn = 0.205;//.22
-  double cubeIn = 0.325;//.32
+  double coneIn = 0.217;//.22
+  double cubeIn = 0.321;//.32
   double coneInShelf = 0.56;
   double cubeInShelf = comp;
 
@@ -120,8 +121,8 @@ public class Robot extends TimedRobot {
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneIn));//wristPID.getOutput is a percentage, add a negative to it to inverse the way the motor spins
         // wristPIDOutput = wristPID.getOutput(wristPot.get(), coneIn);
         armDoublePH.set(Value.kReverse);// arm pos
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.75);// motor speed
-        if (Sensor.get() && sensor_Timer.hasElapsed(.1)) {
+         m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.75);// motor speed
+        if (Sensor.get() && sensor_Timer.hasElapsed(.2)) {
           mode = 3;
         }
         break;
@@ -132,7 +133,7 @@ public class Robot extends TimedRobot {
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeIn));// wrist pos
         // wristPIDOutput = wristPID.getOutput(wristPot.get(), cubeIn);// wrist pos
         armDoublePH.set(Value.kReverse);// arm pos
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.35);// motor speed
+         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.35);// motor speed
         if (Sensor.get() && sensor_Timer.hasElapsed(.175)) {
           mode = 3;
         }
@@ -162,7 +163,7 @@ public class Robot extends TimedRobot {
 //#######################################################################################################################
       case 3: // compliance
       {
-        // wristPID.reset();
+        
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), comp));        
        armDoublePH.set(Value.kReverse);// arm pos manual input for complience
@@ -176,7 +177,7 @@ public class Robot extends TimedRobot {
 //scoreing
       case 4: // high cone
       {
-        // wristPID.reset();
+        
         armDoublePH.set(Value.kForward);
         if (mode_4_5_Timer.hasElapsed(.5)){
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneHigh));
@@ -186,7 +187,7 @@ public class Robot extends TimedRobot {
       case 5: // high cube
       {
         
-        // wristPID.reset();
+        
         armDoublePH.set(Value.kForward);
         if (mode_4_5_Timer.hasElapsed(0.85)){
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeHigh));
@@ -196,7 +197,7 @@ public class Robot extends TimedRobot {
     
       
       case 6: { // cone mid
-        // wristPID.reset();
+        
           armDoublePH.set(Value.kForward);  
           
         // if (mode6_timer.hasElapsed(1)){
@@ -205,7 +206,7 @@ public class Robot extends TimedRobot {
         break;
       }
       case 9: {
-        // wristPID.reset();
+        
           armDoublePH.set(Value.kReverse);     
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeMid)); 
           break;
@@ -264,7 +265,7 @@ public class Robot extends TimedRobot {
       // }
 
       case 17:{
-      //  wristPID.reset();
+      
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeIn));// wrist pos
           // wristPIDOutput = wristPID.getOutput(wristPot.get(), cubeIn);// wrist pos
   
@@ -317,12 +318,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    wristPID.setP(3.00125);
-    wristPID.setI(0.933510000001);
-    wristPID.setD(12);
+    wristPID.setP(3.215);
+    wristPID.setI(0.03605);//0.057
+    wristPID.setD(15);//20
     // wristPID.setF(0); //dont toutch unless you know what it will do
     wristPID.setOutputLimits(-.6, .6);//.45
-    wristPID.setOutputRampRate(0.07570); 
+    wristPID.setOutputRampRate(0.0777); 
     wristPID.setMaxIOutput(1.6);
     
   }
@@ -349,12 +350,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    //if(MathUtill.abs(currentPos-Setpoint)<5){ //if error less then 5
-      //do nothint
-   // }else{
-     wristPID.reset();
-   // }
-
+   
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -376,7 +372,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     autoEnabled = true;
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    wristPID.reset();
+    // wristPID.reset();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -388,13 +384,11 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // The code to control the arm and wrist movement can be put here.
     runLoop();
-
   }
 
   @Override
   public void teleopInit() {
     autoEnabled = false;
-    wristPID.reset();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -407,7 +401,9 @@ public class Robot extends TimedRobot {
      pcmCompressor.enableAnalog(0, 120);
       armDoublePH.set(Value.kReverse);
       setMode(0);
-      
+      wristPID.reset();
+
+
       sensor_Timer.reset();
       sensor_Timer.start();
 
@@ -421,20 +417,17 @@ public class Robot extends TimedRobot {
       mode6_timer.start();
 
       mode7_8_timer.start();
-      mode7_8_timer.start();
-
-      
+      mode7_8_timer.start();   
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    runLoop();
-
+    runLoop(); 
   }
 
   private void runLoop() {
-    wristPID.reset();
+    
     // if(m_drivController.getRawButtonPressed(2)){
     // wristPos = 1 - wristPos;
     // }
@@ -476,7 +469,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("airPressure", pcmCompressor.getPressure());
     SmartDashboard.putNumber("WristPid", wristPIDOutput);
     SmartDashboard.putBoolean("sensor", Sensor.get());
-    SmartDashboard.putNumber("Wrist I", wristPID.getOutput());
+    SmartDashboard.putNumber("Motor Speed", wristPID.getOutput());
+    
 
 
     // SmartDashboard.putNumber("swerveAngle");

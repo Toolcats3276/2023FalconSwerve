@@ -40,15 +40,15 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class whopperAuto extends SequentialCommandGroup {
-    public whopperAuto(Swerve s_Swerve){
+public class redWhopper extends SequentialCommandGroup {
+    public redWhopper(Swerve s_Swerve){
 
  
 //#######################################################################################################################
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("whopperOne", new PathConstraints(2.5, 2));
+PathPlannerTrajectory first = PathPlanner.loadPath("redWhopperOne", new PathConstraints(2.5, 2));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -68,7 +68,7 @@ new PPSwerveControllerCommand(
 
 
     //loads path
-PathPlannerTrajectory second = PathPlanner.loadPath("whopperTwo", new PathConstraints(1.5, 0.75));
+PathPlannerTrajectory second = PathPlanner.loadPath("redWhopperTwo", new PathConstraints(1.5, 0.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand2 =
@@ -91,27 +91,21 @@ new PPSwerveControllerCommand(
 
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 13;})
+    new InstantCommand(() -> {Signaling.mode = 13;}),
+
+    new InstantCommand(() -> {Signaling.mode = 15;}) //15
 );
 
 addCommands(
-    new WaitCommand(2)
-);
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 14;})
-
-    
+    new WaitCommand(1)
 );
 
 addCommands(
-    new WaitCommand(2)
-);
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 7;})  //8
+    new InstantCommand(() -> {Signaling.mode = 8;})  //8
 );
 
 addCommands(
-    new WaitCommand(1) //.25
+    new WaitCommand(.25) //.25
 );
 
 addCommands(
@@ -132,31 +126,21 @@ new InstantCommand(
 );
 
 addCommands(
-//     // new InstantCommand(() -> {Signaling.mode = 17;}),
+    // new InstantCommand(() -> {Signaling.mode = 17;}),
 
-//     // new WaitCommand(2.5),
+    // new WaitCommand(2.5),
     swerveControllerCommand2
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 13;}),
-    new InstantCommand(() -> {Signaling.mode = 15;})
-    
-);
-addCommands(
-    new WaitCommand(1)
+    new InstantCommand(() -> {Signaling.mode = 18;}),
+    new WaitCommand(0.75)
 );
 
-
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 8;})
-);
-addCommands(
-    new WaitCommand(1)
-);
 addCommands(
     new InstantCommand(() -> {Signaling.mode = 3;})
-);    
+);
+    
 
 
 

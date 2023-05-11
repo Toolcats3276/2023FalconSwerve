@@ -6,6 +6,7 @@ import frc.robot.subsystems.Swerve;
 import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 import java.util.List;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,15 +40,15 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class parkCube extends SequentialCommandGroup {
-    public parkCube(Swerve s_Swerve){
+public class twoPieceLong extends SequentialCommandGroup {
+    public twoPieceLong(Swerve s_Swerve){
 
  
 //#######################################################################################################################
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("park", new PathConstraints(.75, 0.75));
+PathPlannerTrajectory first = PathPlanner.loadPath("hardTwoPiece", new PathConstraints(1, 0.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -61,13 +62,13 @@ new PPSwerveControllerCommand(
 
     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
-    true,
+    false,
     s_Swerve);
 
-//#######################################################################################################################
 
-//loads path
-PathPlannerTrajectory second = PathPlanner.loadPath("lockWheels", new PathConstraints(.75, 0.5));
+
+    //loads path
+PathPlannerTrajectory second = PathPlanner.loadPath("hardTwoPieceTwo", new PathConstraints(1, 0.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand2 =
@@ -81,7 +82,25 @@ new PPSwerveControllerCommand(
 
     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
-    true,
+    false,
+    s_Swerve);
+
+        //loads path
+PathPlannerTrajectory third = PathPlanner.loadPath("hardTwoPieceThree", new PathConstraints(1, 0.5));
+
+//creates swerve controller command
+PPSwerveControllerCommand swerveControllerCommand3 =
+new PPSwerveControllerCommand(
+    second,
+    s_Swerve::getPose,
+    Constants.Swerve.swerveKinematics,
+    new PIDController(2, 10, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.   
+    //TODO try 0.5, 5, 0 at comp
+    new PIDController(2, 10, 0), // Y controller (usually the same values as X controller)
+
+    new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+    s_Swerve::setModuleStates,
+    false,
     s_Swerve);
 
 //#######################################################################################################################
@@ -90,36 +109,30 @@ new PPSwerveControllerCommand(
 
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 13;})
+    new InstantCommand(() -> {Signaling.mode = 13;}),
+
+    new InstantCommand(() -> {Signaling.mode = 14;}) //wrist
 );
+
 
 addCommands(
     new WaitCommand(1)
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 15;})
+    new InstantCommand(() -> {Signaling.mode = 19;})  //outfeed
 );
 
 addCommands(
-    new WaitCommand(1.5)
+    new WaitCommand(.25) //.25
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 8;})
+    new InstantCommand(() -> {Signaling.mode = 3;}),
+    new WaitCommand(0.5),
+    new InstantCommand(() -> {Signaling.mode = 17;})//cube pickup
 );
 
-addCommands(
-    new WaitCommand(1)
-);
-
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 3;})
-);
-
-addCommands(
-    new WaitCommand(1)
-);
 
 addCommands(//reset odometry, move to cube
 new InstantCommand(
@@ -128,8 +141,28 @@ new InstantCommand(
                 first.getInitialPose().getX(),
                 first.getInitialPose().getY(),
                 first.getInitialHolonomicPose().getRotation()))),
-                swerveControllerCommand
+                swerveControllerCommand    
 );
+
+addCommands(
+    // new InstantCommand(() -> {Signaling.mode = 17;}),
+
+    // new WaitCommand(2.5),
+    swerveControllerCommand2
+);
+
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 18;}), //shoot
+    new WaitCommand(0.75)
+);
+
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 3;}),
+    swerveControllerCommand3
+);
+
+    
+
 
 
 

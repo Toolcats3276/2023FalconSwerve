@@ -26,9 +26,9 @@ public class RobotContainer {
     public final int mode = 0;
 
     /* Drive Controls */
-    // private final int translationAxis = XboxController.Axis.kLeftY.value;
-    // private final int strafeAxis = XboxController.Axis.kLeftX.value; 
-    // private final int rotationAxis = XboxController.Axis.kRightX.value;
+//     private final int translationAxis = XboxController.Axis.kLeftY.value;
+//     private final int strafeAxis = XboxController.Axis.kLeftX.value; 
+//     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
    private final int translationAxis = Joystick.AxisType.kY.value;
    private final int strafeAxis = Joystick.AxisType.kX.value; 
@@ -50,9 +50,9 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () ->  Math.pow(driver.getRawAxis(translationAxis), 3)/0.75, 
-                () ->  Math.pow(driver.getRawAxis(strafeAxis), 3)/0.75, 
-                () ->  driver.getRawAxis(rotationAxis)/2.25,
+                () ->  Math.pow(driver.getRawAxis(translationAxis), 3)/0.7, 
+                () ->  Math.pow(driver.getRawAxis(strafeAxis), 3)/0.7, 
+                () ->  (driver.getRawAxis(rotationAxis)),
                 () -> robotCentric.getAsBoolean()
             )
         );
@@ -82,7 +82,5 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
        return new whopperAuto(s_Swerve);
-        
-
      }
 }

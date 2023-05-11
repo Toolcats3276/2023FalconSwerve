@@ -39,15 +39,15 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class mobilityCube extends SequentialCommandGroup {
-    public mobilityCube(Swerve s_Swerve){
+public class cubeShort extends SequentialCommandGroup {
+    public cubeShort(Swerve s_Swerve){
 
  
 //#######################################################################################################################
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("mobility", new PathConstraints(2, 0.75));
+PathPlannerTrajectory first = PathPlanner.loadPath("mobilityShort", new PathConstraints(.75, 0.75));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -61,7 +61,7 @@ new PPSwerveControllerCommand(
 
     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
-    true,
+    false,
     s_Swerve);
 
 //#######################################################################################################################
@@ -78,7 +78,7 @@ addCommands(
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 15;})
+    new InstantCommand(() -> {Signaling.mode = 14;})
 );
 
 addCommands(
@@ -86,7 +86,7 @@ addCommands(
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 8;})
+    new InstantCommand(() -> {Signaling.mode = 7;})
 );
 
 addCommands(
@@ -110,9 +110,6 @@ new InstantCommand(
                 first.getInitialHolonomicPose().getRotation()))),
                 swerveControllerCommand
 );
-
-
-
 
     }
 }
