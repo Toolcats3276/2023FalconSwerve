@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.fasterxml.jackson.core.json.WriterBasedJsonGenerator;
 
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
   MiniPID wristPID = new MiniPID(0, 0, 0);
   private final AnalogPotentiometer wristPot = new AnalogPotentiometer(0);
   private final DigitalInput Sensor = new DigitalInput(0);
+  private final CANCoder wristEncoder = new CANCoder(17);
 
   // private final XboxController m_drivController = new XboxController(0);
   private final Joystick m_drivController = new Joystick(0);
@@ -77,6 +79,7 @@ public class Robot extends TimedRobot {
 
   Compressor pcmCompressor = new Compressor(50, PneumaticsModuleType.REVPH);
   DoubleSolenoid armDoublePH = new DoubleSolenoid(50, PneumaticsModuleType.REVPH, 4, 3);
+  DoubleSolenoid slideDoublePH = new DoubleSolenoid(50, PneumaticsModuleType.REVPH, 2, 1);
 
   private boolean autoEnabled = false;
   // PneumaticsControlModule PCM = new PneumaticsControlModule(50);
@@ -95,7 +98,6 @@ public class Robot extends TimedRobot {
   int wristPos = 0;
   double wristPIDOutput = 0;
   int armPos = 0;
- 
   
 //positions
   double comp = 0.70;
@@ -111,6 +113,7 @@ public class Robot extends TimedRobot {
   double coneMid = 0.22;
   double cubeMid = 0.70; // same as complience
 
+ 
 
   public int Mode(int mode) {
     switch (mode) {
@@ -121,6 +124,7 @@ public class Robot extends TimedRobot {
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneIn));//wristPID.getOutput is a percentage, add a negative to it to inverse the way the motor spins
         // wristPIDOutput = wristPID.getOutput(wristPot.get(), coneIn);
         armDoublePH.set(Value.kReverse);// arm pos
+        slideDoublePH.set(Value.kReverse);
          m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.75);// motor speed
         if (Sensor.get() && sensor_Timer.hasElapsed(.2)) {
           mode = 3;
@@ -133,6 +137,7 @@ public class Robot extends TimedRobot {
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeIn));// wrist pos
         // wristPIDOutput = wristPID.getOutput(wristPot.get(), cubeIn);// wrist pos
         armDoublePH.set(Value.kReverse);// arm pos
+        slideDoublePH.set(Value.kReverse);
          m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.35);// motor speed
         if (Sensor.get() && sensor_Timer.hasElapsed(.175)) {
           mode = 3;
@@ -143,6 +148,7 @@ public class Robot extends TimedRobot {
 
       case 21:{
         armDoublePH.set(Value.kReverse);
+        slideDoublePH.set(Value.kReverse);
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneInShelf));
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.75);// motor speed
         if (Sensor.get() && sensor_Timer.hasElapsed(.1)) {
@@ -153,6 +159,7 @@ public class Robot extends TimedRobot {
 
       case 22:{
         armDoublePH.set(Value.kReverse);
+        slideDoublePH.set(Value.kReverse);
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeInShelf));
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.35);// motor speed
         if (Sensor.get() && sensor_Timer.hasElapsed(.175)) {
@@ -166,7 +173,9 @@ public class Robot extends TimedRobot {
         
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), comp));        
-       armDoublePH.set(Value.kReverse);// arm pos manual input for complience
+        armDoublePH.set(Value.kReverse);
+        slideDoublePH.set(Value.kReverse);
+       // arm pos manual input for complience
         // if (mode3_Timer.hasElapsed(3)) {
           // mode = 0;
         // }
@@ -177,7 +186,7 @@ public class Robot extends TimedRobot {
 //scoreing
       case 4: // high cone
       {
-        
+        slideDoublePH.set(Value.kForward);
         armDoublePH.set(Value.kForward);
         if (mode_4_5_Timer.hasElapsed(.5)){
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneHigh));
@@ -187,7 +196,7 @@ public class Robot extends TimedRobot {
       case 5: // high cube
       {
         
-        
+        slideDoublePH.set(Value.kReverse);
         armDoublePH.set(Value.kForward);
         if (mode_4_5_Timer.hasElapsed(0.85)){
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeHigh));
@@ -197,17 +206,17 @@ public class Robot extends TimedRobot {
     
       
       case 6: { // cone mid
-        
-          armDoublePH.set(Value.kForward);  
-          
+          slideDoublePH.set(Value.kReverse);
+          armDoublePH.set(Value.kForward);
         // if (mode6_timer.hasElapsed(1)){
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneMid)); 
         // }       
         break;
       }
-      case 9: {
+      case 9: { //cube mid
         
-          armDoublePH.set(Value.kReverse);     
+          armDoublePH.set(Value.kReverse);
+          slideDoublePH.set(Value.kReverse); 
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeMid)); 
           break;
       }
@@ -254,15 +263,15 @@ public class Robot extends TimedRobot {
 
         break;
       }
-      // case 16: {
-      //   m_infeedMotor.set(TalonFXControlMode.PercentOutput, .4); 
-      //     break;
-      // }
+      case 16: {
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, .4); 
+          break;
+      }
 
-      // case 18: {
-      //   m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2); 
-      //     break;
-      // }
+      case 18: {
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2); 
+          break;
+      }
 
       case 17:{
       
@@ -288,16 +297,27 @@ public class Robot extends TimedRobot {
 
       // }
 
-      // case 20:{
-      //   armDoublePH.set(Value.kReverse);// arm pos manual input for complience
+      case 20:{
+        armDoublePH.set(Value.kReverse);// arm pos manual input for complience
 
-      // }
+      }
+
+      case 23:{ //auto slide out
+        slideDoublePH.set(Value.kForward);
+
+      }
+      case 24:{ //auto slide out
+        slideDoublePH.set(Value.kReverse);
+
+      }
 
 //#################################################################################################################
 
 //auto balance?
      
 //later
+
+
 
     }
     return mode;
@@ -461,16 +481,16 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("wristPot", wristPot.get());
     SmartDashboard.putNumber("flight stick axis", m_flightStick.getRawAxis(1));
     SmartDashboard.putNumber("wrist POS", wristPos);
-    SmartDashboard.putNumber("wristMotorPID output", wristPIDOutput);
+    // SmartDashboard.putNumber("wristMotorPID output", wristPIDOutput);
     SmartDashboard.putNumber("mode", getMode());
     // SmartDashboard.putNumber("memory_mode", memory_mode);
     SmartDashboard.putBoolean("compressor", pcmCompressor.isEnabled());
     SmartDashboard.putBoolean("Auto Enabled", autoEnabled);
     SmartDashboard.putNumber("airPressure", pcmCompressor.getPressure());
-    SmartDashboard.putNumber("WristPid", wristPIDOutput);
+    // SmartDashboard.putNumber("WristPid", wristPIDOutput);
     SmartDashboard.putBoolean("sensor", Sensor.get());
     SmartDashboard.putNumber("Motor Speed", wristPID.getOutput());
-    
+    SmartDashboard.putNumber("wristAngle", wristEncoder.getPosition());
 
 
     // SmartDashboard.putNumber("swerveAngle");

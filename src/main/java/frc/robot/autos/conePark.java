@@ -86,44 +86,60 @@ new PPSwerveControllerCommand(
 
 //#######################################################################################################################
    
-//auto commands
+// auto commands
 
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 13;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 23;})
+);
 
-// addCommands(
-//     new WaitCommand(1)
-// );
+addCommands(
+    new WaitCommand(1)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 14;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 13;})
+);
 
-// addCommands(
-//     new WaitCommand(1.5)
-// );
+addCommands(
+    new WaitCommand(1)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 16;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 14;})
+);
 
-// addCommands(
-//     new WaitCommand(1)
-// );
+addCommands(
+    new WaitCommand(1.5)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 12;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 16;})
+);
 
-// addCommands(
-//     new WaitCommand(1.25)
-// );
+addCommands(
+    new WaitCommand(1)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 20;})
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 12;})
+);
+
+addCommands(
+    new WaitCommand(1.25)
+);
+
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 20;})
+);
+
+addCommands(
+    new WaitCommand(1.25)
+);
+
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 24;})
+);
 
 addCommands(
     new WaitCommand(1)

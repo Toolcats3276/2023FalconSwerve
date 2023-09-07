@@ -70,6 +70,14 @@ new PPSwerveControllerCommand(
 
 
 addCommands(
+    new InstantCommand(() -> {Signaling.mode = 23;})
+);
+
+addCommands(
+    new WaitCommand(1)
+);
+
+addCommands(
     new InstantCommand(() -> {Signaling.mode = 13;})
 );
 
@@ -103,6 +111,14 @@ addCommands(
 
 addCommands(
     new InstantCommand(() -> {Signaling.mode = 20;})
+);
+
+addCommands(
+    new WaitCommand(1)
+);
+
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 24;})
 );
 
 addCommands(
