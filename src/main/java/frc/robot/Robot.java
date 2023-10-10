@@ -4,43 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
-import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.Pigeon2;
-import com.fasterxml.jackson.core.json.WriterBasedJsonGenerator;
-
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.motorcontrol.*;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Joystick;
-import frc.lib.util.COTSFalconSwerveConstants.driveGearRatios;
-import frc.robot.MiniPID;
-import frc.robot.Constants.Swerve;
-import pabeles.concurrency.ConcurrencyOps.Reset;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import com.revrobotics.*;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.*;
 
-import java.util.Base64.Decoder;
-
-import javax.swing.JToggleButton.ToggleButtonModel;
-import javax.swing.plaf.SliderUI;
-
-import com.ctre.phoenix.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,6 +28,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer = new RobotContainer();
+  
+
+
 
   private final Timer sensor_Timer = new Timer();
   private final Timer mode3_Timer = new Timer();
@@ -71,7 +45,7 @@ public class Robot extends TimedRobot {
   MiniPID wristPID = new MiniPID(0, 0, 0);
   private final AnalogPotentiometer wristPot = new AnalogPotentiometer(0);
   private final DigitalInput Sensor = new DigitalInput(0);
-  private final CANCoder wristEncoder = new CANCoder(17);
+  
 
   // private final XboxController m_drivController = new XboxController(0);
   private final Joystick m_drivController = new Joystick(0);
@@ -100,18 +74,20 @@ public class Robot extends TimedRobot {
   int armPos = 0;
   
 //positions
-  double comp = 0.70;
+  double comp = 0.87;//.65
 
-  double coneIn = 0.217;//.22
-  double cubeIn = 0.321;//.32
-  double coneInShelf = 0.56;
-  double cubeInShelf = comp;
+  double coneIn = 0.3;//.17
+  double cubeIn = 0.41;//.3
+  // double coneInShelf = 0.56;
+  // double cubeInShelf = comp;
 
-  double coneHigh = 0.34;
-  double cubeHigh = 0.44;//.44
+  double coneHigh = 0.38;//.26
+  double cubeHigh = 0.57;//.4
+  //.73 for shooting high cube
 
-  double coneMid = 0.22;
-  double cubeMid = 0.70; // same as complience
+  double coneMid = 0.26;//.12
+  double cubeMid = 0.83
+  ; // same as complience
 
  
 
@@ -125,8 +101,8 @@ public class Robot extends TimedRobot {
         // wristPIDOutput = wristPID.getOutput(wristPot.get(), coneIn);
         armDoublePH.set(Value.kReverse);// arm pos
         slideDoublePH.set(Value.kReverse);
-         m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.75);// motor speed
-        if (Sensor.get() && sensor_Timer.hasElapsed(.2)) {
+         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.75);// motor speed
+        if (Sensor.get() && sensor_Timer.hasElapsed(.3)) {
           mode = 3;
         }
         break;
@@ -138,35 +114,35 @@ public class Robot extends TimedRobot {
         // wristPIDOutput = wristPID.getOutput(wristPot.get(), cubeIn);// wrist pos
         armDoublePH.set(Value.kReverse);// arm pos
         slideDoublePH.set(Value.kReverse);
-         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.35);// motor speed
-        if (Sensor.get() && sensor_Timer.hasElapsed(.175)) {
+         m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.7);// motor speed
+        if (Sensor.get() && sensor_Timer.hasElapsed(.45)) {
           mode = 3;
         }
         break;
 
       }
 
-      case 21:{
-        armDoublePH.set(Value.kReverse);
-        slideDoublePH.set(Value.kReverse);
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneInShelf));
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.75);// motor speed
-        if (Sensor.get() && sensor_Timer.hasElapsed(.1)) {
-          mode = 3;
-        }
-        break;
-      }
+      // case 21:{
+      //   armDoublePH.set(Value.kReverse);
+      //   slideDoublePH.set(Value.kReverse);
+      //   m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneInShelf));
+      //   m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.75);// motor speed
+      //   if (Sensor.get() && sensor_Timer.hasElapsed(.1)) {
+      //     mode = 3;
+      //   }
+      //   break;
+      // }
 
-      case 22:{
-        armDoublePH.set(Value.kReverse);
-        slideDoublePH.set(Value.kReverse);
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeInShelf));
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.35);// motor speed
-        if (Sensor.get() && sensor_Timer.hasElapsed(.175)) {
-          mode = 3;
-        }
-        break;
-      }
+      // case 22:{
+      //   armDoublePH.set(Value.kReverse);
+      //   slideDoublePH.set(Value.kReverse);
+      //   m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeInShelf));
+      //   m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.35);// motor speed
+      //   if (Sensor.get() && sensor_Timer.hasElapsed(.175)) {
+      //     mode = 3;
+      //   }
+      //   break;
+      // }
 //#######################################################################################################################
       case 3: // compliance
       {
@@ -186,10 +162,11 @@ public class Robot extends TimedRobot {
 //scoreing
       case 4: // high cone
       {
-        slideDoublePH.set(Value.kForward);
         armDoublePH.set(Value.kForward);
         if (mode_4_5_Timer.hasElapsed(.5)){
         m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), coneHigh));
+        slideDoublePH.set(Value.kForward);
+
       }
       break;
     }
@@ -198,7 +175,7 @@ public class Robot extends TimedRobot {
         
         slideDoublePH.set(Value.kReverse);
         armDoublePH.set(Value.kForward);
-        if (mode_4_5_Timer.hasElapsed(0.85)){
+        if (mode_4_5_Timer.hasElapsed(0.1)){
           m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeHigh));
         }
           break;        
@@ -224,18 +201,39 @@ public class Robot extends TimedRobot {
 
 //#########################################################################################################      
       case 7: { //outfeed cone
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, .5); 
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -.5); 
         
        break;
 
       }
       case 8: { //outfeed cube
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -1);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2);//0.75
         
         break;
       }
 //################################################################################################################
+// adjustment modes
 
+      case 25: { //cone adjustment in/cube out
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -.3); 
+        if (sensor_Timer.hasElapsed(.3)){
+          m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0); 
+        }
+        break;
+      }
+      case 26: { //cube adjustment in/ cone out(be carefull!!)
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -.3); 
+        if (Sensor.get() & sensor_Timer.hasElapsed(.3)){
+          m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0); 
+        }
+        break;
+
+      }
+
+
+
+
+//################################################################################################################
 
 //modes used for auto
      
@@ -251,51 +249,56 @@ public class Robot extends TimedRobot {
         break;
       }
       case 14:{//cone wrist up
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),0.32));
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), 0.4));
         armDoublePH.set(Value.kForward);
 
         break;
       }
 
       case 15:{//cube wrist up
-        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(),0.44));
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeHigh));
         armDoublePH.set(Value.kForward);
 
         break;
       }
       case 16: {
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, .4); 
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.4); 
           break;
       }
 
       case 18: {
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, -2); 
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2); 
           break;
       }
 
       case 17:{
       
-          m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), cubeIn));// wrist pos
+          m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), 0.425));// wrist pos
           // wristPIDOutput = wristPID.getOutput(wristPot.get(), cubeIn);// wrist pos
   
           armDoublePH.set(Value.kReverse);// arm pos
   
-          m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.5);// motor speed
+          m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.5);// motor speed
           if (Sensor.get()) {// sensor delay
             sensor_Timer.start();
           } else {
             sensor_Timer.reset();}
 
           if (Sensor.get() && sensor_Timer.hasElapsed(.3 )) {
-            mode = 3;
+            mode = 19;
           }
           break; 
       }
 
-      // case 19:{
-      //   m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.5);// motor speed
-
-      // }
+      case 19:{
+   
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
+        m_wristMotor.set(TalonFXControlMode.PercentOutput, wristPID.getOutput(wristPot.get(), 0.8 ));        
+        armDoublePH.set(Value.kReverse);
+        slideDoublePH.set(Value.kReverse);
+       
+        break;
+      }
 
       case 20:{
         armDoublePH.set(Value.kReverse);// arm pos manual input for complience
@@ -420,6 +423,7 @@ public class Robot extends TimedRobot {
 
      pcmCompressor.enableAnalog(0, 120);
       armDoublePH.set(Value.kReverse);
+      slideDoublePH.set(Value.kReverse);
       setMode(0);
       wristPID.reset();
 
@@ -490,7 +494,7 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("WristPid", wristPIDOutput);
     SmartDashboard.putBoolean("sensor", Sensor.get());
     SmartDashboard.putNumber("Motor Speed", wristPID.getOutput());
-    SmartDashboard.putNumber("wristAngle", wristEncoder.getPosition());
+
 
 
     // SmartDashboard.putNumber("swerveAngle");
@@ -504,7 +508,7 @@ public class Robot extends TimedRobot {
         m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0);
         setMode(0);
       }
-      if (m_flightStick.getRawButtonPressed(1)){
+      if (m_flightStick.getRawButtonPressed(8)){
         setMode(0);
       }
      
@@ -524,12 +528,12 @@ public class Robot extends TimedRobot {
         sensor_Timer.reset();
         sensor_Timer.start();
       }
-      if (m_drivController.getRawButtonPressed(16) && (getMode() !=4 || getMode() != 5)){
-        setMode(21);
-      }
-      if (m_drivController.getRawButtonPressed(15) && (getMode() !=4 || getMode() != 5)){
-        setMode(22);
-      }
+      // if (m_drivController.getRawButtonPressed(16) && (getMode() !=4 || getMode() != 5)){
+      //   setMode(21);
+      // }
+      // if (m_drivController.getRawButtonPressed(15) && (getMode() !=4 || getMode() != 5)){
+      //   setMode(22);
+      // }
 
 //#################################################################################################
 
@@ -573,17 +577,36 @@ public class Robot extends TimedRobot {
 
       }
       if (m_drivController.getRawButton(14)){// low cone (14 for joustick  7 for xbox )
-        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 2);
+        m_infeedMotor.set(TalonFXControlMode.PercentOutput, 3);
       }
       
 //##############################################################################################
 
+    //adjustment buttons
+    if (m_drivController.getRawButtonPressed(9)){
+      setMode(25);
+      sensor_Timer.reset();
+      sensor_Timer.start();
+    }
+    if (m_drivController.getRawButtonPressed(16)){
+      setMode(26);
+      sensor_Timer.reset();
+      sensor_Timer.start();
+    }
 
+
+
+
+//##############################################################################################
 //these next few are what starts and resets the timers used in the modes
       if (Sensor.get()) {// sensor delay
         sensor_Timer.start();
       } else {
         sensor_Timer.reset();}
+
+
+
+
 
       // if (getMode() == 3) {// mode 3 timer
       //   mode3_Timer.start();
@@ -614,17 +637,19 @@ public class Robot extends TimedRobot {
 
       
       
-
-
-
 //#####################################################################################
 
 
       // pneumatic commands
 
-      if (m_flightStick.getRawButtonPressed(2)) { // enable compressor
-        pcmCompressor.enableAnalog(100, 120);
+      if (m_flightStick.getRawButtonPressed(9)) { // enable compressor
+        pcmCompressor.enableAnalog(100, 110);
+     
       } 
+
+      if (m_flightStick.getRawButtonPressed(8)) { 
+        pcmCompressor.disable();
+      }
       
 
       
@@ -634,6 +659,12 @@ public class Robot extends TimedRobot {
       }
       if (m_flightStick.getRawButtonPressed(6)) {
         armDoublePH.set(Value.kReverse);
+      }
+      if (m_flightStick.getRawButtonPressed(1)) {
+        slideDoublePH.set(Value.kForward);
+      }
+      if (m_flightStick.getRawButtonPressed(2)) {
+        slideDoublePH.set(Value.kReverse);
       }
 
       

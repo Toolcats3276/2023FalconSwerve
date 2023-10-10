@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import com.ctre.phoenix.sensors.Pigeon2;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,6 +21,9 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    public double[] ypr;
+    public double BalancePoint;
+
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -103,15 +105,34 @@ public class Swerve extends SubsystemBase {
         gyro.setYaw(0);
     }
 
+    public void zeroGyroAuto(){
+        gyro.setYaw(180);
+    }
+
     public Rotation2d getYaw() {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
+
+    public double getPitch() {
+        return gyro.getPitch();
+    }
+
+    public double setBalancePoint(){
+        System.out.println(BalancePoint);
+        return BalancePoint = gyro.getPitch();
+        
+    }
+
+   
 
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
         }
     }
+
+    
+
 
     @Override
     public void periodic(){
@@ -130,5 +151,8 @@ public class Swerve extends SubsystemBase {
 
             // SmartDashboard.putNumber("Mod" + mod.moduleNumber = " EncoderValue", mod.get) 
         }
+    }
+
+    public void drive(Rotation2d rotation2d) {
     }
 }

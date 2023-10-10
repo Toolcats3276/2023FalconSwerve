@@ -3,38 +3,15 @@ package frc.robot.autos;
 import frc.robot.Constants;
 import frc.robot.Signaling;
 import frc.robot.subsystems.Swerve;
-import pabeles.concurrency.ConcurrencyOps.NewInstance;
-
-import java.util.List;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
@@ -48,7 +25,7 @@ public class whopperAuto extends SequentialCommandGroup {
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("whopperOne", new PathConstraints(2.5, 2));
+PathPlannerTrajectory first = PathPlanner.loadPath("whopperOne", new PathConstraints(3, 1.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -68,7 +45,7 @@ new PPSwerveControllerCommand(
 
 
     //loads path
-PathPlannerTrajectory second = PathPlanner.loadPath("whopperTwo", new PathConstraints(1.5, 0.75));
+PathPlannerTrajectory second = PathPlanner.loadPath("whopperTwo", new PathConstraints(3, 1.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand2 =
@@ -85,50 +62,74 @@ new PPSwerveControllerCommand(
     false,
     s_Swerve);
 
+
+    // PathPlannerTrajectory third = PathPlanner.loadPath("whopper2ndCube", new PathConstraints(1.5, 0.75));
+
+    // PPSwerveControllerCommand swerveControllerCommand3 =
+    // new PPSwerveControllerCommand(
+    //     third,
+    //     s_Swerve::getPose,
+    //     Constants.Swerve.swerveKinematics,
+    //     new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.   
+    //     //TODO try 0.5, 5, 0 at comp
+    //     new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+    
+    //     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+    //     s_Swerve::setModuleStates,
+    //     false,
+    //     s_Swerve);
+
 //#######################################################################################################################
    
 //auto commands
 
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 13;})
+    new InstantCommand(() -> {s_Swerve.zeroGyro();})
 );
 
 addCommands(
-    new WaitCommand(2)
+    new InstantCommand(() -> {Signaling.mode = 13;})//arms up
+);
+
+addCommands(
+    new WaitCommand(.5)
 );
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 14;})
-
+    new InstantCommand(() -> {Signaling.mode = 14;})//wrist out cone
     
 );
 
 addCommands(
-    new WaitCommand(2)
-);
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 7;})  //8
+    new WaitCommand(.8)
 );
 
 addCommands(
-    new WaitCommand(1) //.25
+    new InstantCommand(() -> {Signaling.mode = 7;})  //score cone
+   
 );
+
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 3;}),
-    new WaitCommand(0.5),
-    new InstantCommand(() -> {Signaling.mode = 17;})
+    new WaitCommand(.5) //.25
 );
 
-
-addCommands(//reset odometry, move to cube
-new InstantCommand(
+addCommands(new SequentialCommandGroup(
+    new InstantCommand(() -> {Signaling.mode = 3;}),//compliance
+    new WaitCommand(1),
+    new InstantCommand(() -> {Signaling.mode = 17;}),
+    new InstantCommand(
     () -> s_Swerve.resetOdometry(
             new Pose2d(
                 first.getInitialPose().getX(),
                 first.getInitialPose().getY(),
                 first.getInitialHolonomicPose().getRotation()))),
-                swerveControllerCommand    
+                swerveControllerCommand  
+));
+
+
+addCommands(//reset odometry, move to cube
+  
 );
 
 addCommands(
@@ -139,28 +140,31 @@ addCommands(
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 13;}),
-    new InstantCommand(() -> {Signaling.mode = 15;})
-    
-);
-addCommands(
-    new WaitCommand(1)
+    new InstantCommand(() -> {Signaling.mode = 3;})
+    // new InstantCommand(() -> {Signaling.mode = 15;})  
 );
 
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 18;})
+);
+addCommands(
+    new WaitCommand(.25)
+);
+// addCommands(
+//     new InstantCommand(() -> {Signaling.mode = 15;})
+// );
+// addCommands(
+//     new InstantCommand(() -> {Signaling.mode = 8;})
 
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 8;})
-);
-addCommands(
-    new WaitCommand(1)
-);
+// );
+
 addCommands(
     new InstantCommand(() -> {Signaling.mode = 3;})
 );    
 
-
-
-
+addCommands(
+    new InstantCommand(() -> {s_Swerve.zeroGyroAuto();})
+);
 
     }
 }

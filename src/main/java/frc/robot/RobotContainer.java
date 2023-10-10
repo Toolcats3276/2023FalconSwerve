@@ -4,13 +4,17 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.autos.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.autos.AutoBalanceAuto;
+import frc.robot.autos.whopperAuto;
+import frc.robot.autos.OnePieceAuto;
+
+import frc.robot.commands.AutoBalanceCommand;
+import frc.robot.commands.TeleopSwerve;
+
+import frc.robot.subsystems.Swerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,9 +41,11 @@ public class RobotContainer {
 
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value); //kY for xbox
+    private final JoystickButton zeroGyro = new JoystickButton(driver, 8); //kY for xbox
 
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton AutoBalance = new JoystickButton(driver, 11);
+    private final JoystickButton SetPoint = new JoystickButton(driver, 12);
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
@@ -70,6 +76,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        AutoBalance.onTrue(new AutoBalanceCommand(s_Swerve));
+        SetPoint.onTrue(new InstantCommand(() -> s_Swerve.setBalancePoint()));
         
 
     }
@@ -81,6 +89,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-       return new singlePiece(s_Swerve);
+       return new AutoBalanceAuto(s_Swerve);
+      
      }
 }
