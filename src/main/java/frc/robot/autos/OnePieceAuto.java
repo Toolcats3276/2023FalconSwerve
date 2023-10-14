@@ -6,6 +6,7 @@ import frc.robot.subsystems.Swerve;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -26,7 +27,7 @@ public class OnePieceAuto extends SequentialCommandGroup {
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("onePiece", new PathConstraints(1, 0.6));
+PathPlannerTrajectory first = PathPlanner.loadPath("onePiece", new PathConstraints(1.75, 0.6));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -44,49 +45,52 @@ new PPSwerveControllerCommand(
     s_Swerve);
 
 
-addCommands(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
-
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 13;})
+    new InstantCommand(() -> s_Swerve.zeroGyro())//zero gyro
 );
 
 addCommands(
-    new WaitCommand(.75)
-);
-addCommands(
-    new InstantCommand(() -> {Signaling.mode = 14;})
-    
+    new InstantCommand(() -> {Signaling.mode = 13;})//arms up
 );
 
 addCommands(
-    new WaitCommand(.75)
+    new WaitCommand(1)
 );
 
 addCommands(
-    new InstantCommand(() -> {Signaling.mode = 7;})  //8
-   
+    new InstantCommand(() -> {Signaling.mode = 14;})//cone wrist out
 );
 
-
 addCommands(
-    new WaitCommand(1) //.25
+    new WaitCommand(1)
 );
 
-
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 7;})  //outfeed
+);
 
 addCommands(
+    new WaitCommand(.5) 
+);
+
+addCommands(new SequentialCommandGroup(
+    new InstantCommand(() -> {Signaling.mode = 3;}),//compliance
+
+    new InstantCommand(() -> {Signaling.mode = 17;}),//cube in
+
     new InstantCommand(
     () -> s_Swerve.resetOdometry(
             new Pose2d(
                 first.getInitialPose().getX(),
                 first.getInitialPose().getY(),
-                first.getInitialHolonomicPose().getRotation()
-                ))),
-                swerveControllerCommand
-);
+                first.getInitialHolonomicPose().getRotation()))),
+                swerveControllerCommand  
+));
 
-addCommands(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
-}
+addCommands(
+    new InstantCommand(() -> s_Swerve.zeroGyro())//zero gyro
+    );
+
+    }
 }

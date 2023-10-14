@@ -25,7 +25,7 @@ public class AutoBalanceCommand extends CommandBase{
 
     private double currentAngle;
     private double output = 0.75;
-    private double setPoint = 0;
+    private double setPoint = 0.1;
    
     
 
@@ -40,7 +40,7 @@ public class AutoBalanceCommand extends CommandBase{
     @Override
      public void initialize() {
         // s_Swerve.setSetpoint();
-        m_debouncer = new Debouncer(4, DebounceType.kRising);//0.09
+        m_debouncer = new Debouncer(.2, DebounceType.kRising);//0.09
         m_debouncer = new Debouncer(.2, DebounceType.kFalling);
         // pidController.reset();
 
