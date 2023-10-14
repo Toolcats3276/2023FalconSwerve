@@ -3,14 +3,17 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.autos.AutoBalanceAuto;
-import frc.robot.autos.whopperAuto;
-import frc.robot.autos.OnePieceAuto;
-
+import frc.robot.autos.whopperAutoBlue;
+import frc.robot.autos.whopperAutoRed;
+import frc.robot.autos.OnePieceAutoBlue;
+import frc.robot.autos.OnePieceAutoRed;
 import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.TeleopSwerve;
 
@@ -50,6 +53,15 @@ public class RobotContainer {
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
 
+    // Autos
+      // A simple auto routine that drives forward a specified distance, and then stops.
+    private final Command a_BlueWhopper = new whopperAutoBlue(s_Swerve);
+    private final Command a_RedWhopper = new whopperAutoRed(s_Swerve);
+    private final Command a_BlueOnePiece = new OnePieceAutoBlue(s_Swerve);
+    private final Command a_RedOnePiece = new OnePieceAutoRed(s_Swerve);
+    private final Command a_AutoBalance = new AutoBalanceAuto(s_Swerve);
+    
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -78,10 +90,25 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         AutoBalance.onTrue(new AutoBalanceCommand(s_Swerve));
         SetPoint.onTrue(new InstantCommand(() -> s_Swerve.setBalancePoint()));
+
+
+
+    // Add commands to the autonomous command chooser
+    m_chooser.addOption("Blue Whopper", a_BlueWhopper);
+    m_chooser.addOption("Red Whopper", a_RedWhopper);
+    m_chooser.addOption("Blue One Piece", a_BlueOnePiece);
+    m_chooser.addOption("Red One Piece", a_RedOnePiece);
+    m_chooser.setDefaultOption("Auto Balance", a_AutoBalance);
+
+    SmartDashboard.putData(m_chooser);
         
 
     }
 
+  // A chooser for autonomous commands
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+    
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -89,7 +116,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-       return new whopperAuto(s_Swerve);
+       return m_chooser.getSelected();
       
      }
 }
