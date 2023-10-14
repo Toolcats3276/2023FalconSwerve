@@ -6,7 +6,6 @@ import frc.robot.subsystems.Swerve;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -19,8 +18,8 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class OnePieceAuto extends SequentialCommandGroup {
-    public OnePieceAuto(Swerve s_Swerve){
+public class OnePieceAutoBlue extends SequentialCommandGroup {
+    public OnePieceAutoBlue(Swerve s_Swerve){
 
  
 //#######################################################################################################################

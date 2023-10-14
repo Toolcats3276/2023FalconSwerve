@@ -17,15 +17,15 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 
 
-public class whopperAuto extends SequentialCommandGroup {
-    public whopperAuto(Swerve s_Swerve){
+public class whopperAutoRed extends SequentialCommandGroup {
+    public whopperAutoRed(Swerve s_Swerve){
 
  
 //#######################################################################################################################
 
 
 //loads path
-PathPlannerTrajectory first = PathPlanner.loadPath("whopperOne", new PathConstraints(3, 1.5));
+PathPlannerTrajectory first = PathPlanner.loadPath("whopperOneRed", new PathConstraints(3, 1.5));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand =
@@ -39,13 +39,13 @@ new PPSwerveControllerCommand(
 
     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
-    true,
+    false,
     s_Swerve);
 
 
 
     //loads path
-PathPlannerTrajectory second = PathPlanner.loadPath("whopperTwo", new PathConstraints(3, 1));
+PathPlannerTrajectory second = PathPlanner.loadPath("whopperTwoRed", new PathConstraints(3, 1));
 
 //creates swerve controller command
 PPSwerveControllerCommand swerveControllerCommand2 =
@@ -59,7 +59,7 @@ new PPSwerveControllerCommand(
 
     new PIDController(0, 0, 0), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
     s_Swerve::setModuleStates,
-    true,
+    false,
     s_Swerve);
 
 
@@ -88,30 +88,30 @@ addCommands(
     new InstantCommand(() -> {s_Swerve.zeroGyro();})
 );
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 13;})//arms up
-// );
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 13;})//arms up
+);
 
-// addCommands(
-//     new WaitCommand(.5)
-// );
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 14;})//wrist out cone
+addCommands(
+    new WaitCommand(.5)
+);
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 14;})//wrist out cone
     
-// );
+);
 
-// addCommands(
-//     new WaitCommand(1.5)
-// );
+addCommands(
+    new WaitCommand(1.5)
+);
 
-// addCommands(
-//     new InstantCommand(() -> {Signaling.mode = 7;})  //score cone
+addCommands(
+    new InstantCommand(() -> {Signaling.mode = 7;})  //score cone
    
-// );
+);
 
-// addCommands(
-//     new WaitCommand(.75)
-// );
+addCommands(
+    new WaitCommand(.75)
+);
 
 addCommands(new SequentialCommandGroup(
     new InstantCommand(() -> {Signaling.mode = 3;}),//compliance
