@@ -62,7 +62,7 @@ addCommands(
 );
 
 addCommands(
-    new WaitCommand(1.25)
+    new WaitCommand(1.5)
 );
 
 addCommands(

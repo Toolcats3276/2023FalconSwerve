@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
 
   Compressor pcmCompressor = new Compressor(50, PneumaticsModuleType.REVPH);
   DoubleSolenoid armDoublePH = new DoubleSolenoid(50, PneumaticsModuleType.REVPH, 4, 3);
-  DoubleSolenoid slideDoublePH = new DoubleSolenoid(50, PneumaticsModuleType.REVPH, 2, 1);
+  DoubleSolenoid slideDoublePH = new DoubleSolenoid(50, PneumaticsModuleType.REVPH, 7, 6);
 
   private boolean autoEnabled = false;
 
@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
         slideDoublePH.set(Value.kReverse);
 
          m_infeedMotor.set(TalonFXControlMode.PercentOutput, 0.75);
-        if (Sensor.get() && sensor_Timer.hasElapsed(.3)) {
+        if (Sensor.get() && sensor_Timer.hasElapsed(.4)) {
           mode = 3;
         }
         break;
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
         slideDoublePH.set(Value.kReverse);
 
          m_infeedMotor.set(TalonFXControlMode.PercentOutput, -0.7);
-        if (Sensor.get() && sensor_Timer.hasElapsed(.3)) {
+        if (Sensor.get() && sensor_Timer.hasElapsed(.35)) {
           mode = 3;
         }
         break;
@@ -637,7 +637,7 @@ public class Robot extends TimedRobot {
       // pneumatic commands
 
       if (m_flightStick.getRawButtonPressed(9)) { // enable compressor
-        pcmCompressor.enableAnalog(100, 110);}
+        pcmCompressor.enableAnalog(105, 110);}
      
        else if (m_flightStick.getRawButton(8)) { 
         pcmCompressor.disable();
